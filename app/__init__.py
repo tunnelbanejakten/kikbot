@@ -1,9 +1,10 @@
 import os
 
-from flask import Flask
+from flask import Flask, logging
 from kik import KikApi, Configuration
 
 application = Flask(__name__)
+application.logger.setLevel(logging.DEBUG)
 
 bot_username = os.environ.get('KIK_BOT_USERNAME')
 bot_api_key = os.environ.get('KIK_BOT_APIKEY')
