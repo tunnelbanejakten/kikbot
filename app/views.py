@@ -9,6 +9,9 @@ from app import application
 from app import kik
 import requests
 
+IFTTT_EVENT_KEY = 'm_IqDwoDWohGS_orXbk7y-S_wZEZaXWM7jQp8l4x5-x'
+IFTTT_EVENT_NAME = 'tunnelbanejakten-kikbot'
+
 
 @application.route('/')
 def index():
@@ -41,13 +44,13 @@ def incoming():
             reply_to_kik_message(message=message,
                                  response='Tack för ditt svar.')
             trigger_ifttt_event(event='new_message',
-                                message=message.body,
+                                data=message.body,
                                 sender=message.from_user)
         elif isinstance(message, PictureMessage):
             reply_to_kik_message(message=message,
                                  response='Tack för din bild.')
             trigger_ifttt_event(event='new_photo',
-                                message=message.pic_url,
+                                data=message.pic_url,
                                 sender=message.from_user)
         elif isinstance(message, VideoMessage):
             reply_to_kik_message(message=message,
@@ -67,11 +70,12 @@ def reply_to_kik_message(message, response):
     ])
 
 
-def trigger_ifttt_event(event, message=None, sender=None):
+def trigger_ifttt_event(event, data=None, sender=None):
     r = requests.post(
-        'https://maker.ifttt.com/trigger/%s/with/key/m_IqDwoDWohGS_orXbk7y-S_wZEZaXWM7jQp8l4x5-x' % event,
+        'https://maker.ifttt.com/trigger/%s/with/key/%s' % (IFTTT_EVENT_NAME, IFTTT_EVENT_KEY),
         data={
-            'value1': sender,
-            'value2': message
+            'value1': event,
+            'value2': sender,
+            'value3': data
         })
     print "IFTTT Response Code: %s" % r.status_code
