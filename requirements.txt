@@ -1,0 +1,3 @@
+Flask
+gunicorn
+kik==1.2.0
