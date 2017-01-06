@@ -12,6 +12,8 @@ def index():
 
 @application.before_request
 def log_request_info():
+    print('Headers: %s', request.headers)
+    print('Body: %s', request.get_data())
     application.logger.info('Headers: %s', request.headers)
     application.logger.info('Body: %s', request.get_data())
 

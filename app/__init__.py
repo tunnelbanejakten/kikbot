@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, logging
+from flask import Flask
 from kik import KikApi, Configuration
 
 application = Flask(__name__)
