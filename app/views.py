@@ -10,6 +10,12 @@ def index():
     return "Hej"
 
 
+@application.before_request
+def log_request_info():
+    application.logger.debug('Headers: %s', request.headers)
+    application.logger.debug('Body: %s', request.get_data())
+
+
 @application.route('/incoming', methods=['POST'])
 def incoming():
     if not kik.verify_signature(request.headers.get('X-Kik-Signature'), request.get_data()):
