@@ -1,5 +1,6 @@
 # coding=utf-8
 from flask import request, Response
+from kik.error import KikError
 from kik.messages import PictureMessage
 from kik.messages import messages_from_json, TextMessage
 from kik.messages.start_chatting import StartChattingMessage
@@ -15,15 +16,13 @@ IFTTT_EVENT_NAME = 'tunnelbanejakten-kikbot'
 
 @application.route('/')
 def index():
-    return "Hej"
+    return "Hello"
 
 
-@application.before_request
-def log_request_info():
-    print('Headers: %s', request.headers)
-    print('Body: %s', request.get_data())
-    application.logger.info('Headers: %s', request.headers)
-    application.logger.info('Body: %s', request.get_data())
+# @application.before_request
+# def log_request_info():
+#     print('Headers: %s', request.headers)
+#     print('Body: %s', request.get_data())
 
 
 @application.route('/incoming', methods=['POST'])
@@ -61,13 +60,16 @@ def incoming():
 
 
 def reply_to_kik_message(message, response):
-    kik.send_messages([
-        TextMessage(
-            to=message.from_user,
-            chat_id=message.chat_id,
-            body=response
-        )
-    ])
+    try:
+        kik.send_messages([
+            TextMessage(
+                to=message.from_user,
+                chat_id=message.chat_id,
+                body=response
+            )
+        ])
+    except KikError as e:
+        print 'Could not send Kik message. %s' % e.message
 
 
 def trigger_ifttt_event(event, data=None, sender=None):
@@ -78,4 +80,4 @@ def trigger_ifttt_event(event, data=None, sender=None):
             'value2': sender,
             'value3': data
         })
-    print "IFTTT Response Code: %s" % r.status_code
+    print "IFTTT Response Code to sending event %s to handler %s: %s" % (event, IFTTT_EVENT_KEY, r.status_code)
