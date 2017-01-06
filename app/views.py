@@ -12,8 +12,8 @@ def index():
 
 @application.before_request
 def log_request_info():
-    application.logger.debug('Headers: %s', request.headers)
-    application.logger.debug('Body: %s', request.get_data())
+    application.logger.info('Headers: %s', request.headers)
+    application.logger.info('Body: %s', request.get_data())
 
 
 @application.route('/incoming', methods=['POST'])
